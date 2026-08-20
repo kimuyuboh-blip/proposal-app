@@ -1,39 +1,413 @@
+@import url('https://fonts.googleapis.com/css2?family=Cinzel:wght@500;700&family=Quicksand:wght@400;600;700&display=swap');
+
 .proposal-container {
+  position: relative;
+  overflow-x: hidden;
+  overflow-y: auto;
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  height: 100vh;
+  min-height: 100vh;
+  padding: 32px 16px;
   text-align: center;
-  background-color: #fff5f8;
-  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  font-family: 'Quicksand', 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  background: radial-gradient(ellipse at top, #241b4f 0%, #150a35 45%, #05020f 100%);
+  color: #f4f0ff;
 }
 
-.button-group {
+/* Starfield: two tiled dot layers drifting/twinkling for depth */
+.proposal-container::before,
+.proposal-container::after {
+  content: '';
+  position: absolute;
+  inset: -50px;
+  background-repeat: repeat;
+  pointer-events: none;
+}
+
+.proposal-container::before {
+  background-image:
+    radial-gradient(1.5px 1.5px at 20px 30px, #ffffff 100%, transparent 100%),
+    radial-gradient(1.5px 1.5px at 90px 80px, #ffffff 100%, transparent 100%),
+    radial-gradient(1px 1px at 150px 40px, #ffffff 100%, transparent 100%),
+    radial-gradient(1px 1px at 60px 120px, #ffffff 100%, transparent 100%),
+    radial-gradient(1.5px 1.5px at 180px 150px, #ffffff 100%, transparent 100%);
+  background-size: 200px 200px;
+  animation: twinkle 4s ease-in-out infinite;
+}
+
+.proposal-container::after {
+  background-image:
+    radial-gradient(1px 1px at 40px 100px, #d8c9ff 100%, transparent 100%),
+    radial-gradient(1.5px 1.5px at 110px 20px, #d8c9ff 100%, transparent 100%),
+    radial-gradient(1px 1px at 170px 90px, #d8c9ff 100%, transparent 100%),
+    radial-gradient(1.5px 1.5px at 10px 160px, #d8c9ff 100%, transparent 100%);
+  background-size: 260px 260px;
+  animation: twinkle 5s ease-in-out infinite reverse;
+}
+
+@keyframes twinkle {
+  0%, 100% { opacity: 0.4; }
+  50% { opacity: 1; }
+}
+
+.question-ui,
+.celebration {
+  position: relative;
+  z-index: 1;
+  max-width: min(92vw, 560px);
+  margin: 0 auto;
+}
+
+.music-toggle {
+  position: fixed;
+  top: 16px;
+  right: 16px;
+  z-index: 10;
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  border: none;
+  font-size: 20px;
   display: flex;
   align-items: center;
-  gap: 10px;
-  margin-top: 20px;
+  justify-content: center;
+  background: linear-gradient(180deg, #3a2f70 0%, #241b4f 100%);
+  color: #f4f0ff;
+  box-shadow: 0 0 14px rgba(185, 139, 255, 0.5);
+  cursor: pointer;
+  transition: box-shadow 0.2s ease, transform 0.2s ease;
 }
 
-.yes-button {
-  background-color: #4caf50;
-  color: white;
-  border: none;
-  padding: 10px 20px;
-  border-radius: 5px;
-  cursor: pointer;
+.music-toggle:hover {
+  box-shadow: 0 0 20px rgba(185, 139, 255, 0.8);
+  transform: scale(1.08);
 }
 
-.no-button {
-  background-color: #f44336;
-  color: white;
-  border: none;
-  padding: 10px 20px;
-  border-radius: 5px;
-  cursor: pointer;
+.hearts-layer {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  pointer-events: none;
+  z-index: 1;
+}
+
+.floating-heart {
+  position: absolute;
+  bottom: -10%;
+  opacity: 0;
+  filter: drop-shadow(0 0 6px rgba(255, 154, 205, 0.6));
+  animation-name: float-up;
+  animation-timing-function: ease-in;
+  animation-iteration-count: infinite;
+}
+
+@keyframes float-up {
+  0% {
+    transform: translateY(0) scale(0.85);
+    opacity: 0;
+  }
+  10% {
+    opacity: 0.85;
+  }
+  85% {
+    opacity: 0.5;
+  }
+  100% {
+    transform: translateY(-115vh) scale(1.1);
+    opacity: 0;
+  }
+}
+
+/* Celebration sequence — timings here must match App.jsx's constants:
+   STRIKE_TIME = 6s (heart grows, arrow arrives), EXPLOSION_TIME = 6.3s
+   (heart + arrow shatter, confetti/message start), fireworks then keep
+   firing for 4s more (FIREWORKS_WINDOW). */
+.burst-stage {
+  position: relative;
+  width: min(95vw, 480px);
+  height: 340px;
+  margin: 0 auto;
+}
+
+.balloon-heart {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  font-size: 130px;
+  line-height: 1;
+  transform-origin: center;
+  transform: translate(-50%, -50%) scale(0.3);
+  filter: drop-shadow(0 0 26px rgba(255, 138, 178, 0.75));
+  animation:
+    balloon-grow 6s ease-in-out forwards,
+    balloon-pop 0.3s ease-in 6.3s forwards;
+}
+
+/* A slow, heartbeat-like inflate over 6s so the "growing balloon" doesn't
+   just linearly expand — it swells, settles, swells again, each time bigger. */
+@keyframes balloon-grow {
+  0%   { transform: translate(-50%, -50%) scale(0.3); }
+  15%  { transform: translate(-50%, -50%) scale(0.85); }
+  25%  { transform: translate(-50%, -50%) scale(0.75); }
+  40%  { transform: translate(-50%, -50%) scale(1.25); }
+  50%  { transform: translate(-50%, -50%) scale(1.1); }
+  65%  { transform: translate(-50%, -50%) scale(1.55); }
+  75%  { transform: translate(-50%, -50%) scale(1.4); }
+  90%  { transform: translate(-50%, -50%) scale(1.8); }
+  100% { transform: translate(-50%, -50%) scale(1.8); }
+}
+
+@keyframes balloon-pop {
+  0% { transform: translate(-50%, -50%) scale(1.8); opacity: 1; }
+  40% { transform: translate(-50%, -50%) scale(2.2); opacity: 1; }
+  100% { transform: translate(-50%, -50%) scale(0.2); opacity: 0; }
+}
+
+/* A single, hand-built arrow (shaft + head + fletching) rather than an emoji,
+   sized to clearly pierce all the way through the big heart. */
+.cupid-arrow {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 200px;
+  height: 10px;
+  border-radius: 4px;
+  background: linear-gradient(90deg, #b9812a 0%, #f5cd7e 55%, #fffbe8 100%);
+  box-shadow: 0 0 14px rgba(245, 205, 126, 0.8);
+  opacity: 0;
+  animation:
+    arrow-fly 0.6s ease-in 5.4s both,
+    arrow-shatter 0.3s ease-in 6.3s forwards;
+}
+
+.cupid-arrow::before {
+  /* arrowhead */
+  content: '';
+  position: absolute;
+  right: -26px;
+  top: 50%;
+  transform: translateY(-50%);
+  border-left: 30px solid #fffbe8;
+  border-top: 15px solid transparent;
+  border-bottom: 15px solid transparent;
+  filter: drop-shadow(0 0 8px rgba(255, 251, 232, 0.9));
+}
+
+.cupid-arrow::after {
+  /* fletching */
+  content: '';
+  position: absolute;
+  left: -18px;
+  top: 50%;
+  transform: translateY(-50%);
+  border-right: 20px solid #6a5acd;
+  border-top: 10px solid transparent;
+  border-bottom: 10px solid transparent;
+}
+
+@keyframes arrow-fly {
+  0% { transform: translate(-50%, -50%) translate(260px, -260px) rotate(-40deg) scale(0.7); opacity: 0; }
+  15% { opacity: 1; }
+  100% { transform: translate(-50%, -50%) translate(0, 0) rotate(-40deg) scale(1); opacity: 1; }
+}
+
+@keyframes arrow-shatter {
+  0% { transform: translate(-50%, -50%) translate(0, 0) rotate(-40deg) scale(1); opacity: 1; }
+  100% { transform: translate(-50%, -50%) translate(0, 0) rotate(-40deg) scale(0.3); opacity: 0; }
+}
+
+.confetti-layer {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+
+.fireworks-layer {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  pointer-events: none;
+}
+
+.confetti-piece {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 8px;
+  height: 8px;
+  border-radius: 2px;
+  opacity: 0;
+  animation: confetti-burst 1.6s ease-out forwards;
+}
+
+@keyframes confetti-burst {
+  0% { transform: translate(0, 0) rotate(0deg) scale(0.6); opacity: 0; }
+  10% { opacity: 1; }
+  60% { transform: translate(var(--tx), var(--ty)) rotate(var(--rot)) scale(1); opacity: 1; }
+  100% {
+    transform: translate(calc(var(--tx) * 1.15), calc(var(--ty) + 130px)) rotate(calc(var(--rot) + 90deg)) scale(0.8);
+    opacity: 0;
+  }
+}
+
+.firework-burst {
+  position: absolute;
+}
+
+.firework-flash {
+  position: absolute;
+  top: -20px;
+  left: -20px;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  opacity: 0;
+  animation: firework-flash 0.5s ease-out forwards;
+}
+
+@keyframes firework-flash {
+  0% { transform: scale(0.2); opacity: 0.9; }
+  100% { transform: scale(3.5); opacity: 0; }
+}
+
+.firework-particle {
+  position: absolute;
+  width: 16px;
+  height: 16px;
+  border-radius: 50%;
+  opacity: 0;
+  box-shadow: 0 0 22px 6px currentColor;
+  animation: particle-burst 1.4s ease-out forwards;
+}
+
+@keyframes particle-burst {
+  0% { transform: translate(0, 0) scale(1); opacity: 1; }
+  70% { opacity: 0.9; }
+  100% { transform: translate(var(--tx), var(--ty)) scale(0.3); opacity: 0; }
+}
+
+.personal-message {
+  max-width: min(90vw, 620px);
+  margin: 8px auto 0;
+  font-size: clamp(1.4rem, 4.5vw, 2rem);
+  line-height: 1.4;
+  opacity: 0;
+  transform: scale(0.8);
+  background: linear-gradient(120deg, #f5cd7e 40%, #fffbe8 50%, #f5cd7e 60%);
+  background-size: 250% 100%;
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  animation:
+    message-reveal 0.9s ease-out 6.3s forwards,
+    message-shine 2.5s ease-in-out 7.2s infinite;
+}
+
+.signature {
+  margin-top: 12px;
+  font-family: 'Cinzel', serif;
+  font-size: 1.1rem;
+  color: #d8c9ff;
+  opacity: 0;
+  animation: message-reveal 0.9s ease-out 6.6s forwards;
+}
+
+@keyframes message-reveal {
+  0% { opacity: 0; transform: scale(0.8); }
+  60% { opacity: 1; transform: scale(1.05); }
+  100% { opacity: 1; transform: scale(1); }
+}
+
+@keyframes message-shine {
+  0% { background-position: 200% 0; }
+  100% { background-position: -200% 0; }
+}
+
+.emoji-placeholder {
+  font-size: 80px;
+  line-height: 1;
+  display: block;
+  filter: drop-shadow(0 0 18px rgba(255, 214, 156, 0.65));
 }
 
 h1 {
-  color: #d32f2f;
+  font-family: 'Cinzel', serif;
+  font-weight: 700;
+  background: linear-gradient(180deg, #fff6df 0%, #f5cd7e 50%, #d9a441 100%);
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  text-shadow: 0 0 24px rgba(245, 205, 126, 0.35);
+  margin: 16px 0 0;
+}
+
+.button-group {
+  position: relative;
+  width: min(90vw, 420px);
+  height: 180px;
+  margin-top: 24px;
+}
+
+.yes-button {
+  position: absolute;
+  top: 50%;
+  left: 20%;
+  transform: translate(-50%, -50%);
+  background: linear-gradient(180deg, #ffe9b8 0%, #f0b849 60%, #d99b2b 100%);
+  color: #3a2405;
+  border: none;
+  padding: 12px 26px;
+  border-radius: 999px;
+  font-family: 'Quicksand', sans-serif;
+  font-weight: 700;
+  cursor: pointer;
+  box-shadow: 0 0 20px rgba(240, 184, 73, 0.55);
+  transition: box-shadow 0.2s ease;
+}
+
+.yes-button:hover {
+  box-shadow: 0 0 30px rgba(240, 184, 73, 0.8);
+}
+
+.no-button {
+  position: absolute;
+  transform: translate(-50%, -50%);
+  background: linear-gradient(180deg, #6a5acd 0%, #4b3f9e 100%);
+  color: #f4f0ff;
+  border: none;
+  padding: 12px 26px;
+  border-radius: 999px;
+  font-family: 'Quicksand', sans-serif;
+  font-weight: 600;
+  cursor: pointer;
+  box-shadow: 0 0 14px rgba(106, 90, 205, 0.5);
+  transition: top 0.15s ease-out, left 0.15s ease-out, box-shadow 0.2s ease;
+}
+
+.no-button:hover {
+  box-shadow: 0 0 20px rgba(106, 90, 205, 0.75);
+}
+
+/* Small phones: shrink the balloon/arrow as one unit (scale, not resize —
+   keeps every sub-part in proportion) and give buttons/emoji a bit less room. */
+@media (max-width: 420px) {
+  .burst-stage {
+    transform: scale(0.78);
+    transform-origin: center top;
+  }
+
+  .emoji-placeholder {
+    font-size: 60px;
+  }
+
+  .button-group {
+    height: 150px;
+  }
+
+  .yes-button,
+  .no-button {
+    padding: 10px 20px;
+  }
 }
