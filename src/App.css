@@ -52,14 +52,6 @@
   50% { opacity: 1; }
 }
 
-.question-ui,
-.celebration {
-  position: relative;
-  z-index: 1;
-  max-width: min(92vw, 560px);
-  margin: 0 auto;
-}
-
 .music-toggle {
   position: fixed;
   top: 16px;
@@ -120,290 +112,6 @@
   }
 }
 
-/* Celebration sequence — timings here must match App.jsx's constants:
-   STRIKE_TIME = 6s (heart grows, arrow arrives), EXPLOSION_TIME = 6.3s
-   (heart + arrow shatter, confetti/message start), fireworks then keep
-   firing for 4s more (FIREWORKS_WINDOW). */
-.burst-stage {
-  position: relative;
-  width: min(95vw, 480px);
-  height: 340px;
-  margin: 0 auto;
-}
-
-/* A CSS-drawn anatomical-style heart (two lobes + a shine) instead of an
-   emoji, so the gradient/shading actually reads as a "real" heart at large
-   scale rather than pixelating like a scaled-up glyph. */
-.balloon-heart {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  width: 116px;
-  height: 104px;
-  transform-origin: center;
-  transform: translate(-50%, -50%) scale(0.28);
-  filter: drop-shadow(0 0 26px rgba(255, 46, 84, 0.65));
-  animation:
-    balloon-grow 8s ease-in-out forwards,
-    balloon-pop 0.3s ease-in 8.3s forwards;
-}
-
-.balloon-heart::before,
-.balloon-heart::after {
-  content: '';
-  position: absolute;
-  top: 0;
-  left: 58px;
-  width: 58px;
-  height: 92px;
-  border-radius: 58px 58px 0 0;
-  background:
-    radial-gradient(circle at 32% 28%, rgba(255, 255, 255, 0.55), transparent 42%),
-    linear-gradient(155deg, #ff5470 0%, #e01234 55%, #7a0c19 100%);
-  transform: rotate(-45deg);
-  transform-origin: 0 100%;
-  box-shadow: inset 0 -14px 22px rgba(0, 0, 0, 0.35);
-}
-
-.balloon-heart::after {
-  left: 0;
-  transform: rotate(45deg);
-  transform-origin: 100% 100%;
-}
-
-.heart-shine {
-  position: absolute;
-  top: 14%;
-  left: 28%;
-  width: 26%;
-  height: 20%;
-  background: radial-gradient(ellipse at center, rgba(255, 255, 255, 0.85), transparent 70%);
-  border-radius: 50%;
-  transform: rotate(-20deg);
-  z-index: 1;
-}
-
-/* A heartbeat-like inflate over 8s: each pulse settles lower than it swelled,
-   but every pulse peaks higher than the last, so it visibly grows "more and
-   more" rather than just breathing in place, up to 5x its starting size. */
-@keyframes balloon-grow {
-  0%   { transform: translate(-50%, -50%) scale(0.25); }
-  8%   { transform: translate(-50%, -50%) scale(0.43); }
-  14%  { transform: translate(-50%, -50%) scale(0.36); }
-  24%  { transform: translate(-50%, -50%) scale(0.71); }
-  30%  { transform: translate(-50%, -50%) scale(0.61); }
-  42%  { transform: translate(-50%, -50%) scale(1.29); }
-  48%  { transform: translate(-50%, -50%) scale(1.07); }
-  62%  { transform: translate(-50%, -50%) scale(2.14); }
-  68%  { transform: translate(-50%, -50%) scale(1.86); }
-  82%  { transform: translate(-50%, -50%) scale(3.43); }
-  88%  { transform: translate(-50%, -50%) scale(3); }
-  96%  { transform: translate(-50%, -50%) scale(4.64); }
-  100% { transform: translate(-50%, -50%) scale(5); }
-}
-
-@keyframes balloon-pop {
-  0% { transform: translate(-50%, -50%) scale(5); opacity: 1; }
-  35% { transform: translate(-50%, -50%) scale(5.4); opacity: 1; }
-  100% { transform: translate(-50%, -50%) scale(0.2); opacity: 0; }
-}
-
-/* A bright ring that expands outward from the heart the instant it bursts,
-   selling the explosion now that there's no arrow doing that work. */
-.heart-shockwave {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  width: 40px;
-  height: 40px;
-  border-radius: 50%;
-  transform: translate(-50%, -50%) scale(0);
-  background: radial-gradient(circle, rgba(255, 214, 156, 0.9) 0%, rgba(255, 93, 130, 0.5) 45%, transparent 75%);
-  opacity: 0;
-  animation: heart-shockwave 0.7s ease-out 8.3s forwards;
-}
-
-@keyframes heart-shockwave {
-  0% { transform: translate(-50%, -50%) scale(0.3); opacity: 0.9; }
-  100% { transform: translate(-50%, -50%) scale(17); opacity: 0; }
-}
-
-.confetti-layer {
-  position: absolute;
-  inset: 0;
-  pointer-events: none;
-}
-
-.fireworks-layer {
-  position: absolute;
-  inset: 0;
-  overflow: hidden;
-  pointer-events: none;
-}
-
-.confetti-piece {
-  position: absolute;
-  top: 50%;
-  left: 50%;
-  width: 8px;
-  height: 8px;
-  border-radius: 2px;
-  opacity: 0;
-  animation: confetti-burst 1.6s ease-out forwards;
-}
-
-@keyframes confetti-burst {
-  0% { transform: translate(0, 0) rotate(0deg) scale(0.6); opacity: 0; }
-  10% { opacity: 1; }
-  60% { transform: translate(var(--tx), var(--ty)) rotate(var(--rot)) scale(1); opacity: 1; }
-  100% {
-    transform: translate(calc(var(--tx) * 1.15), calc(var(--ty) + 130px)) rotate(calc(var(--rot) + 90deg)) scale(0.8);
-    opacity: 0;
-  }
-}
-
-.firework-burst {
-  position: absolute;
-}
-
-.firework-flash {
-  position: absolute;
-  top: -20px;
-  left: -20px;
-  width: 40px;
-  height: 40px;
-  border-radius: 50%;
-  opacity: 0;
-  animation: firework-flash 0.5s ease-out forwards;
-}
-
-@keyframes firework-flash {
-  0% { transform: scale(0.2); opacity: 0.9; }
-  100% { transform: scale(3.5); opacity: 0; }
-}
-
-.firework-particle {
-  position: absolute;
-  width: 16px;
-  height: 16px;
-  border-radius: 50%;
-  opacity: 0;
-  box-shadow: 0 0 22px 6px currentColor;
-  animation: particle-burst 1.4s ease-out forwards;
-}
-
-@keyframes particle-burst {
-  0% { transform: translate(0, 0) scale(1); opacity: 1; }
-  70% { opacity: 0.9; }
-  100% { transform: translate(var(--tx), var(--ty)) scale(0.3); opacity: 0; }
-}
-
-.personal-message {
-  max-width: min(90vw, 620px);
-  margin: 8px auto 0;
-  font-size: clamp(1.4rem, 4.5vw, 2rem);
-  line-height: 1.4;
-  opacity: 0;
-  transform: scale(0.8);
-  background: linear-gradient(120deg, #f5cd7e 40%, #fffbe8 50%, #f5cd7e 60%);
-  background-size: 250% 100%;
-  -webkit-background-clip: text;
-  background-clip: text;
-  color: transparent;
-  animation:
-    message-reveal 0.9s ease-out 8.3s forwards,
-    message-shine 2.5s ease-in-out 9.2s infinite;
-}
-
-.signature {
-  margin-top: 12px;
-  font-family: 'Cinzel', serif;
-  font-size: 1.1rem;
-  color: #d8c9ff;
-  opacity: 0;
-  animation: message-reveal 0.9s ease-out 8.6s forwards;
-}
-
-@keyframes message-reveal {
-  0% { opacity: 0; transform: scale(0.8); }
-  60% { opacity: 1; transform: scale(1.05); }
-  100% { opacity: 1; transform: scale(1); }
-}
-
-@keyframes message-shine {
-  0% { background-position: 200% 0; }
-  100% { background-position: -200% 0; }
-}
-
-.want-more-button {
-  display: block;
-  margin: 22px auto 0;
-  opacity: 0;
-  animation: message-reveal 0.9s ease-out 9.4s forwards;
-}
-
-.gauge-wrap {
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 10px;
-  width: min(90vw, 380px);
-  margin: 6px auto 30px;
-}
-
-.gauge-value {
-  font-family: 'Cinzel', serif;
-  font-size: 2.6rem;
-  font-weight: 700;
-  line-height: 1;
-  background: linear-gradient(180deg, #fff6df 0%, #f5cd7e 50%, #d9a441 100%);
-  -webkit-background-clip: text;
-  background-clip: text;
-  color: transparent;
-}
-
-.gauge-slider {
-  width: 100%;
-  appearance: none;
-  -webkit-appearance: none;
-  height: 10px;
-  border-radius: 999px;
-  background: linear-gradient(90deg, #6a5acd 0%, #b98bff 50%, #f0b849 100%);
-  outline: none;
-  cursor: pointer;
-}
-
-.gauge-slider::-webkit-slider-thumb {
-  -webkit-appearance: none;
-  appearance: none;
-  width: 26px;
-  height: 26px;
-  border-radius: 50%;
-  background: linear-gradient(180deg, #ffe9b8 0%, #f0b849 60%, #d99b2b 100%);
-  box-shadow: 0 0 14px rgba(240, 184, 73, 0.7);
-  cursor: pointer;
-  border: 2px solid #fffbe8;
-}
-
-.gauge-slider::-moz-range-thumb {
-  width: 26px;
-  height: 26px;
-  border-radius: 50%;
-  background: linear-gradient(180deg, #ffe9b8 0%, #f0b849 60%, #d99b2b 100%);
-  box-shadow: 0 0 14px rgba(240, 184, 73, 0.7);
-  cursor: pointer;
-  border: 2px solid #fffbe8;
-}
-
-.gauge-scale {
-  display: flex;
-  justify-content: space-between;
-  width: 100%;
-  font-family: 'Quicksand', sans-serif;
-  color: #d8c9ff;
-  font-size: 0.85rem;
-}
-
 .emoji-placeholder {
   font-size: 80px;
   line-height: 1;
@@ -420,53 +128,6 @@ h1 {
   color: transparent;
   text-shadow: 0 0 24px rgba(245, 205, 126, 0.35);
   margin: 16px 0 0;
-}
-
-.button-group {
-  position: relative;
-  width: min(90vw, 420px);
-  height: 180px;
-  margin-top: 24px;
-}
-
-.yes-button {
-  position: absolute;
-  top: 50%;
-  left: 20%;
-  transform: translate(-50%, -50%);
-  background: linear-gradient(180deg, #ffe9b8 0%, #f0b849 60%, #d99b2b 100%);
-  color: #3a2405;
-  border: none;
-  padding: 12px 26px;
-  border-radius: 999px;
-  font-family: 'Quicksand', sans-serif;
-  font-weight: 700;
-  cursor: pointer;
-  box-shadow: 0 0 20px rgba(240, 184, 73, 0.55);
-  transition: box-shadow 0.2s ease;
-}
-
-.yes-button:hover {
-  box-shadow: 0 0 30px rgba(240, 184, 73, 0.8);
-}
-
-.no-button {
-  position: absolute;
-  transform: translate(-50%, -50%);
-  background: linear-gradient(180deg, #6a5acd 0%, #4b3f9e 100%);
-  color: #f4f0ff;
-  border: none;
-  padding: 12px 26px;
-  border-radius: 999px;
-  font-family: 'Quicksand', sans-serif;
-  font-weight: 600;
-  cursor: pointer;
-  box-shadow: 0 0 14px rgba(106, 90, 205, 0.5);
-  transition: top 0.15s ease-out, left 0.15s ease-out, box-shadow 0.2s ease;
-}
-
-.no-button:hover {
-  box-shadow: 0 0 20px rgba(106, 90, 205, 0.75);
 }
 
 /* Story pages (cover / briefing / evidence / verdict) that run before the
@@ -617,24 +278,157 @@ h1 {
   }
 }
 
-/* Small phones: shrink the balloon/arrow as one unit (scale, not resize —
-   keeps every sub-part in proportion) and give buttons/emoji a bit less room. */
 @media (max-width: 420px) {
-  .burst-stage {
-    transform: scale(0.78);
-    transform-origin: center top;
-  }
-
   .emoji-placeholder {
     font-size: 60px;
   }
+}
 
-  .button-group {
-    height: 150px;
-  }
+/* Scene 1 of the pre-proposal tease: the scratch-off quote card. */
+.scratch-scene {
+  position: relative;
+  z-index: 1;
+  max-width: min(92vw, 560px);
+  margin: 0 auto;
+  animation: case-page-in 0.6s ease-out both;
+}
 
-  .yes-button,
-  .no-button {
-    padding: 10px 20px;
-  }
+.scratch-card {
+  position: relative;
+  width: min(88vw, 340px);
+  height: min(52vh, 380px);
+  margin: 24px auto 0;
+  border-radius: 16px;
+  overflow: hidden;
+  box-shadow: 0 12px 30px rgba(0, 0, 0, 0.45);
+  /* Fades and scales up into view when the scratch scene mounts it. */
+  animation: scene-fade-in 0.6s ease-out both;
+}
+
+.scratch-card__quote {
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 28px;
+  margin: 0;
+  font-family: 'Cinzel', serif;
+  font-size: clamp(1.05rem, 4vw, 1.35rem);
+  line-height: 1.5;
+  color: #3a2405;
+  background: linear-gradient(160deg, #fffbe8 0%, #ffe9b8 60%, #f5cd7e 100%);
+  text-align: center;
+}
+
+.scratch-card__canvas {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  cursor: grab;
+  touch-action: none;
+  transition: opacity 0.6s ease-out;
+}
+
+.scratch-card__canvas--cleared {
+  opacity: 0;
+  pointer-events: none;
+}
+
+/* The proposal itself: photo backdrop + the girlfriend question + the
+   dodging/growing Yes-No pair. Fixed/full-viewport so the "No" button's
+   random % coordinates always land somewhere visible, and so it always
+   fills the screen with no page scroll (see the :has() rule below). */
+.photo-scene {
+  position: fixed;
+  inset: 0;
+  z-index: 5;
+  overflow: hidden;
+  animation: scene-fade-in 0.7s ease-out both;
+}
+
+/* While the proposal's photo scene is mounted, its fixed layer already
+   covers the full viewport — suppress the container's own scroll so there's
+   never a sliver of scrollable space below/around it. */
+.proposal-container:has(.photo-scene) {
+  overflow: hidden;
+}
+
+.photo-scene__bg {
+  position: absolute;
+  inset: 0;
+  background-image: url('/photo.png');
+  background-size: cover;
+  background-position: center;
+  /* Blurred and scaled up (blur softens the edges, scale hides the overhang
+     so those soft edges don't peek in as a lighter border) so the question
+     and buttons read clearly against it instead of competing with the photo. */
+  filter: blur(6px);
+  transform: scale(1.1);
+}
+
+.photo-scene__overlay {
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(180deg, rgba(58, 20, 10, 0.35) 0%, rgba(58, 20, 10, 0.65) 100%);
+}
+
+.photo-scene__content {
+  position: relative;
+  z-index: 1;
+  height: 100%;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  padding: 24px;
+  text-align: center;
+}
+
+.photo-scene__question {
+  font-family: 'Cinzel', serif;
+  font-weight: 700;
+  font-size: clamp(1.6rem, 6vw, 2.6rem);
+  color: #fffbe8;
+  text-shadow: 0 2px 18px rgba(0, 0, 0, 0.6);
+  margin: 0 0 12px;
+}
+
+.photo-scene__buttons {
+  position: relative;
+}
+
+.photo-scene__yes {
+  background: linear-gradient(180deg, #ffe9b8 0%, #f0b849 60%, #d99b2b 100%);
+  color: #3a2405;
+  border: none;
+  padding: 14px 34px;
+  border-radius: 999px;
+  font-family: 'Quicksand', sans-serif;
+  font-weight: 700;
+  font-size: 1.1rem;
+  cursor: pointer;
+  box-shadow: 0 0 24px rgba(240, 184, 73, 0.65);
+  transition: transform 0.25s ease-out;
+}
+
+.photo-scene__no {
+  position: fixed;
+  transform: translate(-50%, -50%);
+  background: linear-gradient(180deg, #6a5acd 0%, #4b3f9e 100%);
+  color: #f4f0ff;
+  border: none;
+  padding: 12px 26px;
+  border-radius: 999px;
+  font-family: 'Quicksand', sans-serif;
+  font-weight: 700;
+  cursor: pointer;
+  box-shadow: 0 0 16px rgba(106, 90, 205, 0.6);
+  transition: top 0.15s ease-out, left 0.15s ease-out;
+}
+
+@keyframes scene-fade-in {
+  from { opacity: 0; transform: scale(0.92); }
+  to { opacity: 1; transform: scale(1); }
 }
